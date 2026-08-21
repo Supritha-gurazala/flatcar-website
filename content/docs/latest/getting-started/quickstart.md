@@ -35,6 +35,7 @@ wget https://alpha.release.flatcar-linux.net/arm64-usr/current/flatcar_productio
 wget https://alpha.release.flatcar-linux.net/arm64-usr/current/flatcar_production_qemu_uefi_efi_code.qcow2
 ```
 
+
 For Ignition configurations to be recognized, we have to make sure that we always boot an unmodified fresh image because Ignition only runs on first boot. Therefore, before trying to use an Ignition config, we will always discard the image modifications by using a fresh copy. You can already boot the image with `./flatcar_production_qemu.sh` and have a look around in the OS through the QEMU VGA console - you can close the QEMU window or stop the script with `Ctrl-C`.
 
 ```bash
@@ -43,6 +44,26 @@ mv flatcar_production_qemu_image.img flatcar_production_qemu_image.img.fresh
 # If you want to have a first look, boot it and wait for the autologin to give you a prompt:
 
 cp -i --reflink=auto flatcar_production_qemu_image.img.fresh flatcar_production_qemu_image.img
+```
+
+## Enable hardware-accelerated virtualization 
+
+On Windows/WSL and Ubuntu, QEMU uses KVM for hardware-accelerated virtualization. Your local user needs to be a member of the "kvm" group. You only need to do this once. 
+Check whether your user is already in the kvm group: 
+
+```bash 
+id 
+``` 
+
+If kvm is not listed in the groups section, add your user: 
+
+```bash 
+sudo usermod -a -G kvm <your-username> 
+``` 
+
+The command might prompt you for your user password. Then, to apply the change in the current session, run:
+```bash 
+newgrp kvm 
 ```
 
 ## Provision with Butane and Ignition
